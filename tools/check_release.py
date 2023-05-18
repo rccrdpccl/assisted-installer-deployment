@@ -38,7 +38,8 @@ class DownstreamChecker:
         builds = self._session.search(terms=regexp, type="build", matchType="regexp", queryOpts=query_opts)
         build_id = builds[0]['id']
 
-        task_id = self._get_task_id(build_id)
+        build_info = self._session.getBuild(build_id)
+        task_id = self._get_task_id(build_info)
         logfile = self._session.downloadTaskOutput(task_id, "osbs-build.log")
 
         match_revision_pattern = f'upstream_commit="{commit_hash}"'
@@ -46,8 +47,7 @@ class DownstreamChecker:
             return build_info['nvr']
         raise Exception(f"downstream not matching {commit_hash}")
 
-    def _get_task_id(self, build_id):
-        build_info = self._session.getBuild(build_id)
+    def _get_task_id(self, build_info):
         if "extra" not in build_info and not build_info["extra"]:
             raise Exception("Shouldn't be empty... is it build in progress?")
         if "container_koji_task_id" not in build_info["extra"]:

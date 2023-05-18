@@ -44,7 +44,7 @@ class DownstreamChecker:
         match_revision_pattern = f'upstream_commit="{commit_hash}"'
         if match_revision_pattern in str(logfile):
             return build_info['nvr']
-        raise Exception("downstream not matching {commit_hash}")
+        raise Exception(f"downstream not matching {commit_hash}")
 
     def _get_task_id(self, build_id):
         build_info = self._session.getBuild(build_id)
@@ -55,7 +55,7 @@ class DownstreamChecker:
         return build_info['extra']['container_koji_task_id']
 
 if __name__ == "__main__":
-    downstream_checker = DownstreamChecker(get_brew_session(), deployment_file_path)
+    downstream_checker = DownstreamChecker(get_brew_session())
 
     deployment_file_path = os.path.join(os.path.dirname(__file__), "../assisted-installer.yaml")
     with open(deployment_file_path, "r") as f:
